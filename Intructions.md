@@ -31,7 +31,7 @@ Printing a variable:
                     ldc1    $f12,   num
                     syscall   
     Character:
-                    li      $v0,    4
+                    li      $v0,    11
                     la      $a0,    chr
                     syscall
     String:
@@ -39,4 +39,8 @@ Printing a variable:
                     la      $a0,    str
                     syscall
 
-Addition:
+Mathematical Operations:
+    
+    add $a0, $t0, $t1 == a0 = t0 + t1
+    sub $a0, $t0, $t1 == a0 = t0 - t1
+    mul $a0, $t0, $t1 == a0 = t0 * t1
