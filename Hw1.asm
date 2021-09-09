@@ -9,8 +9,8 @@
 #   product, and quotients.
 
 .data 
-    promptA:	.asciiz		"A: "
-    promptB:	.asciiz		"B: "
+    promptA:	.asciiz     "A: "
+    promptB:	.asciiz     "B: "
     newline:    .byte       '\n'
     output1:    .asciiz     "A + B = "
     output2:    .asciiz     "A - B = "
