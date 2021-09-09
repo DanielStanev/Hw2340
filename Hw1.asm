@@ -18,6 +18,7 @@
     output4:    .asciiz     "A * B = "
     output5:    .asciiz     "A / B = "
     output6:    .asciiz     "B / A = "
+    remainder:  .asciiz     " Remainder "
     error1:     .asciiz     "Undefined; B = 0"
     error2:     .asciiz     "Undefined; A = 0"
 
@@ -81,7 +82,10 @@ main:
     jal insertNewline
 
     # outputs A / B
-
+    li $v0, 4
+    la $a0, output5
+    syscall
+    li $v0, 1
     # outputs B / A
 
     #terminates program
