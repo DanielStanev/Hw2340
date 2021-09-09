@@ -85,8 +85,33 @@ main:
     li $v0, 4
     la $a0, output5
     syscall
+    div $t0, $t1
     li $v0, 1
+    mflo $a0
+    syscall
+    li $v0, 4
+    la $a0, remainder
+    syscall
+    li $v0, 1
+    mfhi $a0
+    syscall
+    jal insertNewline
+
     # outputs B / A
+    li $v0, 4
+    la $a0, output6
+    syscall
+    div $t1, $t0
+    li $v0, 1
+    mflo $a0
+    syscall
+    li $v0, 4
+    la $a0, remainder
+    syscall
+    li $v0, 1
+    mfhi $a0
+    syscall
+
 
     #terminates program
     li $v0, 10
