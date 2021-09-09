@@ -1,4 +1,16 @@
-Creating variables
+Vocab:
+    bit:        binary digit; a 0 or 1
+    byte:       8 bits
+    word:       4 bytes or 32 bits
+    RAM:        Random Access Memory, where variables are stored
+    Register:   Memory on the CPU, used to perform operations, MIPS processors have 32 registers
+
+Registers:
+    In order to perform operations, the values must be loaded in 
+    the CPU Registers and NOT just in Random Access Memory.
+
+Creating variables (loads into RAM):
+
     Integer:        myInt:      .word       12
     Float:          myFlt:      .float      3.14
     Double:         myDub:      .double     6.28
@@ -26,3 +38,5 @@ Printing a variable:
                     li      $v0,    4
                     la      $a0,    str
                     syscall
+
+Addition:
