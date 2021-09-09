@@ -9,5 +9,6 @@
 #   product, and quotients.
 
 .data 
+    prompt:   .asciiz   "Please enter two intgers A and B:"
 
 .text
