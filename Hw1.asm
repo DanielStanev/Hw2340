@@ -11,7 +11,7 @@
 .data 
     promptA:	.asciiz     "A: "
     promptB:	.asciiz     "B: "
-    newline:    .byte       '\n'
+    newline:    .asciiz     "\n"
     output1:    .asciiz     "A + B = "
     output2:    .asciiz     "A - B = "
     output3:    .asciiz     "B - A = "
@@ -44,14 +44,52 @@ main:
     syscall
     move $t1, $v0
 
-    #outputs A + B
+    # outputs A + B
     li $v0, 4
     la $a0, output1
     syscall
     li $v0, 1
     add $a0, $t0, $t1
     syscall
+    jal insertNewline
     
+    # outputs A - B
+    li $v0, 4
+    la $a0, output2
+    syscall
+    li $v0, 1
+    sub $a0, $t0, $t1
+    syscall
+    jal insertNewline
+
+    # outputs B - A
+    li $v0, 4
+    la $a0, output3
+    syscall
+    li $v0, 1
+    sub $a0, $t1, $t0
+    syscall
+    jal insertNewline
+
+    # outputs A * B
+    li $v0, 4
+    la $a0, output4
+    syscall
+    li $v0, 1
+    mul $a0, $t0, $t1
+    syscall
+    jal insertNewline
+
+    # outputs A / B
+
+    # outputs B / A
+
     #terminates program
     li $v0, 10
     syscall
+
+insertNewline:
+    li $v0, 4
+    la $a0, newline
+    syscall
+    jr $ra
