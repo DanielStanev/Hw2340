@@ -11,7 +11,6 @@
 .data 
     promptA:	.asciiz     "A: "
     promptB:	.asciiz     "B: "
-    newline:    .asciiz     "\n"
     output1:    .asciiz     "A + B = "
     output2:    .asciiz     "A - B = "
     output3:    .asciiz     "B - A = "
@@ -46,79 +45,110 @@ main:
     move $t1, $v0
 
     # outputs A + B
+    # Prints "A + B = "
     li $v0, 4
     la $a0, output1
     syscall
+
+    # Prints the answer to A + B
     li $v0, 1
     add $a0, $t0, $t1
     syscall
-    jal insertNewline
+
+    jal insertNewline # Calls procedure to insert a newline character
     
     # outputs A - B
+    # Prints "A - B = "
     li $v0, 4
     la $a0, output2
     syscall
+
+    # Prints answer to A - B
     li $v0, 1
     sub $a0, $t0, $t1
     syscall
-    jal insertNewline
+
+    jal insertNewline # Calls procedure to insert a newline character
 
     # outputs B - A
+    # Prints "B - A = "
     li $v0, 4
     la $a0, output3
     syscall
+
+    # Prints answer to B - A
     li $v0, 1
     sub $a0, $t1, $t0
     syscall
-    jal insertNewline
+
+    jal insertNewline # Calls procedure to insert a newline character
 
     # outputs A * B
+    # Prints "A * B = "
     li $v0, 4
     la $a0, output4
     syscall
+
+    # Prints answer to A * B
     li $v0, 1
     mul $a0, $t0, $t1
     syscall
-    jal insertNewline
 
-    # outputs A / B
+    jal insertNewline # Calls precedure to insert a newline character
+
+    # Outputs A / B
+    # Prints "A / B = "
     li $v0, 4
     la $a0, output5
     syscall
+
+    # Prints answer to A / B
     div $t0, $t1
     li $v0, 1
     mflo $a0
     syscall
+
+    # Prints " Remainder "
     li $v0, 4
     la $a0, remainder
     syscall
+
+    # Prints answer to A % B
     li $v0, 1
     mfhi $a0
     syscall
-    jal insertNewline
 
-    # outputs B / A
+    jal insertNewline # Calls procedure to insert a newline character
+
+    # Outputs B / A
+    # Prints "B / A = "
     li $v0, 4
     la $a0, output6
     syscall
+
+    # Prints out the answer to B / A
     div $t1, $t0
     li $v0, 1
     mflo $a0
     syscall
+
+    # Prints " Remainder "
     li $v0, 4
     la $a0, remainder
     syscall
+
+    # Prints out B % A
     li $v0, 1
     mfhi $a0
     syscall
 
-
-    #terminates program
+    # Terminates Program by issuing syscall code 10
     li $v0, 10
     syscall
 
+# Procedure to print a newline character
 insertNewline:
-    li $v0, 4
-    la $a0, newline
-    syscall
-    jr $ra
+    li $v0, 11   # Loads 11 into v0 to signify printing a single character
+    la $a0, '\n' # Loads '\n' into a0
+    syscall      # Prints '\n'
+    jr $ra       # Returns back to where it was called from
