@@ -20,13 +20,13 @@
     newline:    .asciiz     "\n"
 
     # user input    
-    filename:   .asciiz     "C:\\Files\\Projects\\MIPS\\Hw2340\\test.txt"
+    filename:   .space      256
     content:    .space      4096
 
 .text
 main:
    
-    #jal readInput  # reads in the file name from user input 
+    jal readInput   # reads in the file name from user input 
     jal readFile    # reads the entire file into a string
     jal initialize  # moves the string into a register and prepares saved registers for counting characters
     jal count       # counts the characters
@@ -36,6 +36,31 @@ main:
     li $v0, 10
     syscall
 
+readInput:
+
+    # prompts the user for input
+    li $v0, 4
+    la $a0, prompt
+    syscall
+
+    # stores user input
+    li $v0, 8
+    la $a0, filename
+    li $a1, 256
+    syscall
+
+    # finds where the newline character is in a string
+    addi $t0, $0, 0     # $t0 is the index of the string
+    findNewline:
+        add $t1, $a0, $t0       # $t1 stores the address of the character at the current index
+        lb $t2, ($t1)           # $t2 stores the actual character at the index
+        beq $t2, '\n', removeNewline
+
+        addi $t0, $t0, 1    # increments the index of the string
+        j findNewline
+    removeNewline:
+    sb $0, ($t1)    # since the newline character is the last, the string is ended one char earlier
+    jr $ra
 
 readFile:
 
@@ -80,8 +105,9 @@ count:
 
         jal checkCap    # Checks if current char is a capital
         jal checkLower  # Checks if current char is lowercase
-        jal checkSymbol # Checks if current char is a symbol/ and part of a signed number (- and + are included in both counts)
+        jal checkSymbol # Checks if current char is a symbol
         jal checkDigit  # Checks if current char is a digit
+        jal checkSigned # Checks if current char is a sign
         jal checkLine   # Checks if current char is a newline
 
         addi $a0, $a0, 1 # increments the index of the string
@@ -115,7 +141,32 @@ checkLower:
         jr $ra 
 
 checkSymbol:
+    # exits if $a2 is a digit
+    blt $a2, '0', caps 
+    bgt $a2, '9', caps
     jr $ra
+
+    # exits if $a2 is a capital
+    caps:
+        blt $a2, 'A', lows 
+        bgt $a2, 'Z', lows
+        jr $ra
+
+    # exits if $a2 is a lowercase
+    lows:
+        blt $a2, 'a', line 
+        bgt $a2, 'z', line
+        jr $ra
+
+    # exits if $a2 is a newline char
+    line: 
+        bne $a2, '\n', symbol
+        jr $ra
+
+    # increments the symbol counter
+    symbol:
+        addi $s3, $s3, 1
+        jr $ra
 
 checkDigit:
     # exits the function if $a2 is out of the bounds
@@ -128,6 +179,30 @@ checkDigit:
     # returns to the procedure count:
     exitDigit:
         jr $ra
+
+checkSigned:
+    # checks if the char is a '+' or a '-'
+    beq $a2, '+', checkNext
+    beq $a2, '-', checkNext
+
+    # returns to the procedure count:
+    exitSigned:
+        jr $ra
+
+    # if the next char is a digit then the sign is part of a signed number
+    checkNext:
+        # Stores the next char in $t1
+        add $t0, $s0, $a0
+        addi $t0, $t0, 1
+        lb $t1, ($t0)
+
+        # exits the function if $t1 is not a digit
+        blt $t1, '0', exitSigned
+        bgt $t1, '9', exitSigned
+
+        # increments the signed counter by 1 and exits procedure
+        addi $s5, $s5, 1
+        j exitSigned
 
 checkLine:
     # exits the function if $a2 is not '\n'
