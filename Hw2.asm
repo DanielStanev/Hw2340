@@ -1,16 +1,35 @@
 #   Filename:       Hw2.asm
 #   Author:         Daniel Stanev
 #   Course:         CS 2340.005
-#   Date:           20 Oct 2021
+#   Date:           21 Oct 2021
 #   Assignment:     Pgm2
 #   Language:       MIPS Assembly
 #
-#   Description: 
+#   Description: Takes in 
+#   user input for a file name and
+#   prints out the total number of
+#   captials, lowercase letters, digits
+#   symbols, signed numbers and lines.
+#
+#   Procedures:
+#   main:           Executes five main procedures in order
+#   readInput:      Takes in user input for file location
+#   readFile:       Stores the contents of file into a string
+#   initialize:     Sets all the registers for counting to 0
+#   count:          Counts each character using sub-procedures
+#   print:          Prints the results
+#   checkCap:       Checks for capital letters
+#   checkLower:     Checks for lowercase lettres
+#   checkSymbol:    Checks for symbols
+#   checkDigit:     Checks for digits
+#   checkSigned:    Checks for signed numbers
+#   checkLine:      Checks for newline characters
+#   insertNewline:  Prints a newline char to the console
 
 .data
 
     # program output
-    prompt:     .asciiz     "Please Enter File Directory: "
+    prompt:     .asciiz     "Please Enter Full Path Of A File: "
     capitals:   .asciiz     "No. of Capitals:       "
     lowercase:  .asciiz     "No. of Lowercase:      "
     symbols:    .asciiz     "No. of Symbols:        "
@@ -24,6 +43,10 @@
     content:    .space      4096
 
 .text
+
+#   Author:         Daniel Stanev
+#   Date Created:   21 Oct 2021
+#   Purpose:        Executes the five main procedures required to gather the data from a file
 main:
    
     jal readInput   # reads in the file name from user input 
@@ -36,6 +59,10 @@ main:
     li $v0, 10
     syscall
 
+
+#   Author:         Daniel Stanev
+#   Date Created:   21 Oct 2021
+#   Purpose:        Prompts and stores user input for location of a file
 readInput:
 
     # prompts the user for input
@@ -62,6 +89,10 @@ readInput:
     sb $0, ($t1)    # since the newline character is the last, the string is ended one char earlier
     jr $ra
 
+
+#   Author:         Daniel Stanev
+#   Date Created:   21 Oct 2021
+#   Purpose:        Stores contents of a file into a string
 readFile:
 
     # opens the file
@@ -84,6 +115,10 @@ readFile:
     # returns to the function call in main
     jr $ra
 
+
+#   Author:         Daniel Stanev
+#   Date Created:   21 Oct 2021
+#   Purpose:        Initialize registers to make counting easier
 initialize:
     la $s0, content # $s0 stores the contents of the file
     addi $s1, $0, 0 # $s1 stores the no. capitals
@@ -95,6 +130,11 @@ initialize:
     
     jr $ra          # returns to the call
 
+
+#   Author:         Daniel Stanev
+#   Date Created:   21 Oct 2021
+#   Arguement:      $a0
+#   Purpose:        Counts the stats of the contents of the file read
 count:
     move $s7, $ra       # stores the return address in $s7 since more calls are made
     addi $a0, $0, 0     # $a0 is the index of the string
@@ -116,6 +156,11 @@ count:
     exit:
         jr $s7          # returns to the function call once the loop ends
 
+
+#   Author:         Daniel Stanev
+#   Date Created:   21 Oct 2021
+#   Arguement:      $a2
+#   Purpose:        Checks if a char is a capital letter
 checkCap:
     # exits the function if $a2 is out of the bounds
     blt $a2, 'A', exitCap 
@@ -128,6 +173,11 @@ checkCap:
     exitCap:
         jr $ra  
 
+
+#   Author:         Daniel Stanev
+#   Date Created:   21 Oct 2021
+#   Arguement:      $a2
+#   Purpose:        Checks if a char is a lowercase letter
 checkLower:
     # exits the function if $a2 is out of the bounds
     blt $a2, 'a', exitLow
@@ -140,6 +190,11 @@ checkLower:
     exitLow:
         jr $ra 
 
+
+#   Author:         Daniel Stanev
+#   Date Created:   21 Oct 2021
+#   Arguement:      $a2
+#   Purpose:        Checks if a char is a symbol
 checkSymbol:
     # exits if $a2 is a digit
     blt $a2, '0', caps 
@@ -168,6 +223,10 @@ checkSymbol:
         addi $s3, $s3, 1
         jr $ra
 
+#   Author:         Daniel Stanev
+#   Date Created:   21 Oct 2021
+#   Arguement:      $a2
+#   Purpose:        Checks if a char is a digit
 checkDigit:
     # exits the function if $a2 is out of the bounds
     blt $a2, '0', exitDigit
@@ -180,6 +239,10 @@ checkDigit:
     exitDigit:
         jr $ra
 
+#   Author:         Daniel Stanev
+#   Date Created:   21 Oct 2021
+#   Arguement:      $a2
+#   Purpose:        Checks if a symbol is part of a signed number
 checkSigned:
     # checks if the char is a '+' or a '-'
     beq $a2, '+', checkNext
@@ -204,6 +267,10 @@ checkSigned:
         addi $s5, $s5, 1
         j exitSigned
 
+#   Author:         Daniel Stanev
+#   Date Created:   21 Oct 2021
+#   Arguement:      $a2
+#   Purpose:        Checks if the current index is a '\n' char
 checkLine:
     # exits the function if $a2 is not '\n'
     bne $a2, '\n', exitLine
@@ -215,7 +282,13 @@ checkLine:
     exitLine:
         jr $ra
 
+#   Author:         Daniel Stanev
+#   Date Created:   21 Oct 2021
+#   Arguements:     $s1-$s6
+#   Purpose:        Print out the stats of the file
 print:
+
+    # since other procedure calls are made the return address is stored in a saved register
     move $s7, $ra
 
     # prints the number of capitals
@@ -269,6 +342,10 @@ print:
     # jumps back to where count was called in main
     jr $s7
 
+
+#   Author:         Daniel Stanev
+#   Date Created:   21 Oct 2021
+#   Purpose:        Print a '\n' to the console
 insertNewline:
     li $v0, 4
     la $a0, newline
