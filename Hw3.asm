@@ -1,13 +1,17 @@
 
 .data
 
-    filename .space 256
+	prompt:		.asciiz	"Please enter full path of file: "
+
+    filename:   .space  256
+    buffer:     .space  1
+    bufferLen:  .word   1
 
 .text
 main:
 
     jal readInput
-    jal readFile
+    jal readByte
 
 
     li $v0, 10
@@ -31,13 +35,39 @@ readInput:
     findNewline:
         add $t1, $a0, $t0       # $t1 stores the address of the character at the current index
         lb $t2, ($t1)           # $t2 stores the actual character at the index
-        beq $t2, '\n', removeNewline
+        beq $t2, '\n', openFile
 
         addi $t0, $t0, 1    # increments the index of the string
         j findNewline
-    removeNewline:
+    openFile:
     sb $0, ($t1)    # since the newline character is the last, the string is ended one char earlier
+    li $v0, 13
+    la $a0, filename
+    li $a1, 0
+    syscall
+    move $s0, $v0
     jr $ra
+
+
+readByte:
+
+    li $v0, 13
+    la $a0, filename
+    li $a1, 0
+    syscall
+    move $a0, $v0
+
+    li $v0, 14
+    la $a1, buffer
+    lb $a2, bufferLen
+    syscall
+
+    li $v0, 4
+    la $a0, buffer
+    syscall
+
+    jr $ra 
+
 
 readFile:
 readBinary:
