@@ -14,36 +14,16 @@ main:
     while:
         jal readByte
 
-        # checks the input type
-        beq $a3, 'b', binaryInput
-        beq $a3, 'd', decimalInput
-        beq $a3, 'h', hexInput
-
-        # calls procedure to read given input type
-        binaryInput:
-            jal readBinary
-            j output
-        decimalInput:
-            jal readDecimal
-            j output
-        hexInput:
-            jal readHex
-            j output
+        beq $a3, 'b', readBinary
+        beq $a3, 'd', readDecimal
+        beq $a3, 'h', readHex
 
         output:
+
         # checks the output type
-        beq $a3, 'B', binaryOutput
-        beq $a3, 'D', decimalOutput
-        beq $a3, 'H', hexOutput
-
-        binaryOutput:
-            jal printBinary
-        decimalInput:
-        hexInput:
-
-
-        
-
+        #beq $a3, 'B', binaryOutput
+        #beq $a3, 'D', decimalOutput
+        #beq $a3, 'H', hexOutput
 
         j while
     exit:
@@ -99,9 +79,27 @@ readByte:
 
     jr $ra 
 
+readInputSize: 
+    jal readByte
+    addi $t0, $a3, -48
+    jal readByte
+    bgt $a3, '9', singleDigit
 
-readFile:
+    # processes a 2 digit input length
+    addi $t1, $zero, 10
+    mult $t0, $t1
+    mflo $t0
+    add $s1, $t0, $a3
+    addi $s1, $s1, -48
+
+    singleDigit:
+    addi $s1, $t0, 0
+
 readBinary:
+    jal readInputSize
+    beq 
+
+
 readDecimal:
 readHex:
 printDecimal:
