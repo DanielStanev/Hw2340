@@ -92,13 +92,45 @@ readInputSize:
     add $s1, $t0, $a3
     addi $s1, $s1, -48
 
+    jr $ra 
+
     singleDigit:
-    addi $s1, $t0, 0
+    addi $s1, $t0, 0        # s1 stores the number of digits
+
+    jr $ra
 
 readBinary:
     jal readInputSize
-    beq 
+    blt $s0, 10, binaryProcess
+    jal readByte
 
+    binaryProcess:
+    move $s2, $a3           # $s2 stores the output type
+
+    # discards the ':' abd ' ' chars in the input file
+    jal readByte            # reads in next char from the file
+    jal readByte            # reads in nect char from the file          
+
+
+    li $s3, 1               # $s3 stores the sign of the number (positive by default)
+
+    binaryLoop:
+
+    # s1 is used to represent the power of the current digit
+    addi $s1, -1
+    bltz $s1, output        # when $s1 dips below zero there are no more digits to convert
+
+    jal readByte            # reads in next char from the file
+
+    # adjusts the sign of the number if needed
+    bne $a3, '-', getBinaryDigit
+    li $s3, -1
+
+    getBinaryDigit:
+    bgt 
+
+
+    j binaryLoop
 
 readDecimal:
 readHex:
